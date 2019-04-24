@@ -8,12 +8,11 @@
 		</repository>
 	</repositories>
 #### Step 2. Add the dependency
-
-	<dependency>
-	    <groupId>com.github.blue19demon</groupId>
-	    <artifactId>open-feign</artifactId>
-	    <version>master-SNAPSHOT</version>
-	</dependency>
+            <dependency>
+			<groupId>com.github.blue19demon</groupId>
+			<artifactId>open-feign</artifactId>
+			<version>1.0.0.RELEASE</version>
+		</dependency>
 #### Share this release:
 
 #### TweetLink
