@@ -1,4 +1,4 @@
-package com.server;
+package org.eurake;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,7 +43,7 @@ public class SycMicroServiceConf {
 			log.info(String.valueOf(zk.exists("/zkConfig")));
 			if(!zk.exists("/zkConfig")){
 				zk.createPersistent("/zkConfig",true);
-				eurakeServerFromZookeeperMaps=new HashMap<>();
+				eurakeServerFromZookeeperMaps=new HashMap<String, EurakeServer>();
 				eurakeServerFromZookeeperMaps.put(srvName, new EurakeServer(srvName, localip+":"+port));
 				zk.writeData("/zkConfig", eurakeServerFromZookeeperMaps);
 			}else {
@@ -54,6 +54,7 @@ public class SycMicroServiceConf {
 			zk.close();
 		}else {
 			log.info(">>>>>>file["+userDir+"/src/main/resources/zookeeper.properties"+"] not found!!");
+			throw new RuntimeException(">>>>>>file["+userDir+"/src/main/resources/zookeeper.properties"+"] not found!!");
 		}
 		return eurakeServerFromZookeeperMaps;
 	}

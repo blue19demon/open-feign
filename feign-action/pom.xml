@@ -36,5 +36,6 @@
 		<module>feign-server</module>
 		<module>feign-api</module>
         <module>eurake-server02</module>
+    <module>feign-starter-zk</module>
   </modules>
 </project>
