@@ -1,0 +1,1 @@
+server:  port: 82srv:  name: server-order  mrc:  zookeeper:    host: 127.0.0.1    port: 2181
