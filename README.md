@@ -10,9 +10,9 @@
 #### Step 2. Add the dependency
 
 	<dependency>
-	    <groupId>com.github.1843080373</groupId>
+	    <groupId>com.github.blue19demon</groupId>
 	    <artifactId>open-feign</artifactId>
-	    <version>-SNAPSHOT</version>
+	    <version>master-SNAPSHOT</version>
 	</dependency>
 #### Share this release:
 
