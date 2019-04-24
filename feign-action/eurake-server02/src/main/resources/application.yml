@@ -1,1 +1,1 @@
-server:  port: 81
+server:  port: 81srv:  name: feign-server02

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.I0Itec.zkclient.ZkClient;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -36,13 +37,15 @@ import com.feign.logger.LoggerFactory;
 import com.feign.util.ReflectUtils;
 
 public class Feign implements InvocationHandler {
-	private Logger log = LoggerFactory.getLogger(this.getClass());
+	private static Logger log = LoggerFactory.getLogger(Feign.class);
 	
 	private Class<?> targetClazz;
 
 	private static Feign feign=new Feign();
 	
 	private static Map<String,EurakeServer> eurakeServerMaps=null;
+	
+	private static Map<String,EurakeServer> eurakeServerFromZookeeperMaps=null;
 	private Feign() {
 
 	}
@@ -51,6 +54,26 @@ public class Feign implements InvocationHandler {
 	}
 	public static Feign builder(Map<String,EurakeServer> eurakeServerMaps) {
 		Feign.eurakeServerMaps=eurakeServerMaps;
+		return feign;
+	}
+	public static Feign builderByZookeeper() {
+		String userDir = System.getProperty("user.dir");
+		File eurake_file=new File(userDir+"/src/main/resources/zookeeper.properties");
+		if(eurake_file.exists()) {
+			log.info(">>>>>>file exists>>>>>>>");
+			Properties zookeeperPro=new Properties();
+			try {
+				zookeeperPro.load(new FileInputStream(eurake_file));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			ZkClient zk = new ZkClient(zookeeperPro.getProperty("zookeeper.host")+":"+zookeeperPro.getProperty("zookeeper.port"));
+			log.info(JSONObject.toJSONString(zk.readData("/zkConfig")));
+			Feign.eurakeServerFromZookeeperMaps=zk.readData("/zkConfig");
+		}else {
+			log.info(">>>>>>file["+userDir+"/src/main/resources/zookeeper.properties"+"] not found!!");
+		}
+		
 		return feign;
 	}
 
@@ -65,7 +88,13 @@ public class Feign implements InvocationHandler {
 		if (targetClazz.isAnnotationPresent(FeignClient.class)) {
 			FeignClient FeignClient = targetClazz.getAnnotation(FeignClient.class);
 			log.info("FeignClient>>>>>>"+FeignClient.value());
-			if(eurakeServerMaps!=null) {
+			if(eurakeServerFromZookeeperMaps!=null) {
+				EurakeServer EurakeServer=eurakeServerFromZookeeperMaps.get(FeignClient.value());
+				if(EurakeServer!=null) {
+					urlBuilder.append(EurakeServer.getServerURL());
+				}
+			}
+			else if(eurakeServerMaps!=null) {
 				EurakeServer EurakeServer=eurakeServerMaps.get(FeignClient.value());
 				if(EurakeServer!=null) {
 					urlBuilder.append(EurakeServer.getServerURL());

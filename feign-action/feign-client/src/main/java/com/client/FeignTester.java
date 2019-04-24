@@ -14,9 +14,9 @@ import com.feign.service.ProductClient;
 
 public class FeignTester {
 	private static Logger log = LoggerFactory.getLogger(FeignTester.class);
-	private static Map<String,EurakeServer> eurakeServerMaps=null;
+	private static Map<String, EurakeServer> eurakeServerMaps = null;
 	static {
-		eurakeServerMaps=new HashMap<String, EurakeServer>() {
+		eurakeServerMaps = new HashMap<String, EurakeServer>() {
 			private static final long serialVersionUID = 1L;
 			{
 				put("feign-server",
@@ -26,16 +26,29 @@ public class FeignTester {
 			}
 		};
 	}
+
 	public static void main(String[] args) {
+		// 1.简单字符串返回值
+		Product para = Product.builder().name("ipad").price(new BigDecimal(10000)).build();
+		ProductClient client = Feign.builderByZookeeper().target(ProductClient.class);
+		Product p = client.saveProduct(para);
+
+		User upara = User.builder().name("李斯").desc("宰相").salary(new BigDecimal(10000)).build();
+		PersonClient PersonClient = Feign.builderByZookeeper().target(PersonClient.class);
+		User u = PersonClient.toHello3(upara);
+		log.info(JSONObject.toJSONString(p) + ">>>>>" + JSONObject.toJSONString(u));
+	}
+
+	public static void testCase2() {
 		// 1.简单字符串返回值
 		Product para = Product.builder().name("ipad").price(new BigDecimal(10000)).build();
 		ProductClient client = Feign.builder(eurakeServerMaps).target(ProductClient.class);
 		Product p = client.saveProduct(para);
-		
+
 		User upara = User.builder().name("李斯").desc("宰相").salary(new BigDecimal(10000)).build();
 		PersonClient PersonClient = Feign.builder(eurakeServerMaps).target(PersonClient.class);
 		User u = PersonClient.toHello3(upara);
-		System.out.println(JSONObject.toJSONString(p)+">>>>>"+JSONObject.toJSONString(u));
+		log.info(JSONObject.toJSONString(p) + ">>>>>" + JSONObject.toJSONString(u));
 	}
 
 	public static void testCase1() {

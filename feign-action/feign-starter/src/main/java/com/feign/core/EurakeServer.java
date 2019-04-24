@@ -1,5 +1,7 @@
 package com.feign.core;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,8 +11,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class EurakeServer {
+public class EurakeServer implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1723174785688153098L;
 	private String serverName;
 	private String serverURL;
 	
