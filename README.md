@@ -8,10 +8,10 @@
 		</repository>
 	</repositories>
 #### Step 2. Add the dependency
-            <dependency>
-			<groupId>com.github.blue19demon</groupId>
-			<artifactId>open-feign</artifactId>
-			<version>1.0.0.RELEASE</version>
+		<dependency>
+			<groupId>com.github.blue19demon.open-feign</groupId>
+			<artifactId>feign-starter-zk</artifactId>
+			<version>2.0.0.RELEASE</version>
 		</dependency>
 #### Share this release:
 
