@@ -26,6 +26,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.yaml.snakeyaml.Yaml;
 
 import com.alibaba.fastjson.JSONObject;
 import com.feign.anno.FeignClient;
@@ -49,29 +50,30 @@ public class Feign implements InvocationHandler {
 	private Feign() {
 
 	}
-	public static Feign builder() {
-		return feign;
-	}
 	public static Feign builder(Map<String,EurakeServer> eurakeServerMaps) {
 		Feign.eurakeServerMaps=eurakeServerMaps;
 		return feign;
 	}
-	public static Feign builderByZookeeper() {
+	public static Feign builder() {
 		String userDir = System.getProperty("user.dir");
-		File eurake_file=new File(userDir+"/src/main/resources/zookeeper.properties");
-		if(eurake_file.exists()) {
-			log.info(">>>>>>file exists>>>>>>>");
-			Properties zookeeperPro=new Properties();
+		File ctx_file=new File(userDir+"/src/main/resources/application.yml");
+		if(ctx_file.exists()) {
+			log.info(">>>>>>application.yml file exists>>>>>>>");
 			try {
-				zookeeperPro.load(new FileInputStream(eurake_file));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			ZkClient zk = new ZkClient(zookeeperPro.getProperty("zookeeper.host")+":"+zookeeperPro.getProperty("zookeeper.port"));
-			log.info(JSONObject.toJSONString(zk.readData("/zkConfig")));
-			Feign.eurakeServerFromZookeeperMaps=zk.readData("/zkConfig");
+	            Yaml yaml = new Yaml();
+	            //也可以将值转换为Map
+	            ZookeeperYAML Mrc = yaml.loadAs(new FileInputStream(ctx_file),ZookeeperYAML.class);
+                //通过map我们取值就可以了.
+	            Zookeeper zookeeper=Mrc.getMrc().getZookeeper();
+                ZkClient zk = new ZkClient(zookeeper.getHost()+":"+zookeeper.getPort());
+    			log.info(JSONObject.toJSONString(zk.readData("/zkConfig")));
+    			Feign.eurakeServerFromZookeeperMaps=zk.readData("/zkConfig");
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+			
 		}else {
-			log.info(">>>>>>file["+userDir+"/src/main/resources/zookeeper.properties"+"] not found!!");
+			log.info(">>>>>>file["+userDir+"/src/main/resources/application.yml"+"] not found!!");
 		}
 		
 		return feign;

@@ -9,6 +9,8 @@ import com.feign.api.Product;
 import com.feign.api.User;
 import com.feign.core.EurakeServer;
 import com.feign.core.Feign;
+import com.feign.logger.Logger;
+import com.feign.logger.LoggerFactory;
 import com.feign.service.PersonClient;
 import com.feign.service.ProductClient;
 
@@ -30,11 +32,11 @@ public class FeignTester {
 	public static void main(String[] args) {
 		// 1.简单字符串返回值
 		Product para = Product.builder().name("ipad").price(new BigDecimal(10000)).build();
-		ProductClient client = Feign.builderByZookeeper().target(ProductClient.class);
+		ProductClient client = Feign.builder().target(ProductClient.class);
 		Product p = client.saveProduct(para);
 
 		User upara = User.builder().name("李斯").desc("宰相").salary(new BigDecimal(10000)).build();
-		PersonClient PersonClient = Feign.builderByZookeeper().target(PersonClient.class);
+		PersonClient PersonClient = Feign.builder().target(PersonClient.class);
 		User u = PersonClient.toHello3(upara);
 		log.info(JSONObject.toJSONString(p) + ">>>>>" + JSONObject.toJSONString(u));
 	}
